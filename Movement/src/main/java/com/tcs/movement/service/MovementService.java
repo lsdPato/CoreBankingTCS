@@ -11,10 +11,16 @@ import com.tcs.movement.model.Movements;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +29,7 @@ import java.util.Optional;
 public class MovementService {
     private final AccountRepository accountRepository;
     private final MovementRepository transactionRepository;
+    private final RestTemplate restTemplate;
 
     public Movements makeWithdrawal(MovementDto movementDto){
         Account account = this.findAccountByAccountNumber(movementDto.getDebtorAccount());
@@ -94,6 +101,9 @@ public class MovementService {
 
         this.accountRepository.save(account);
     }
+
+
+
 
 
 

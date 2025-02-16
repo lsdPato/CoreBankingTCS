@@ -8,8 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-@Table(name = "prospecto")
-@Entity
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

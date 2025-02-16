@@ -60,5 +60,10 @@ public class ClientService {
         return clientOptional.map(Client::getCi)
                 .orElseThrow(() -> new RuntimeException("Cliente no encontrado con ID: " + clientId));
     }
+    public String getClientName(String ci) {
+        Optional<Client> clientOptional = clientRepository.findClientByCi(ci);
+        return clientOptional.map(Client::getName)
+                .orElseThrow(() -> new RuntimeException("Cliente no encontrado con ID: " + ci));
+    }
 
 }

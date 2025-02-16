@@ -1,10 +1,7 @@
 package com.tcs.movement.resoruce;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import com.tcs.movement.service.MovementService;
 import com.tcs.movement.dto.MovementDto;
@@ -30,5 +27,12 @@ public class MovementResource {
     public ResponseEntity<?> makeTransfer(@RequestBody MovementDto movementDto) {
         return ResponseEntity.ok(movementService.makeTransfer(movementDto));
     }
+
+   /* @GetMapping("/report")
+    public ResponseEntity<?> generateReport() {
+        return ResponseEntity.ok(movementService.movementReport());
+    }
+    */
+    
     
 }

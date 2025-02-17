@@ -7,7 +7,9 @@ import com.tcs.movement.exception.AccountAssignedException;
 import com.tcs.movement.model.Account;
 import com.tcs.movement.model.Movements;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
@@ -19,6 +21,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AccountService {
@@ -29,6 +32,13 @@ public class AccountService {
     private final MovementRepository movementRepository;
 
     public Account assignedAccount(Account account) {
+//        String url =
+//                "http://localhost:8080/clientes/"
+//                        + ci
+//                        + "/name";
+//        String name = restTemplate.getForObject(url, String.class);
+//       log.info(name);
+
         Optional<Account> accountOpt =
                 accountRepository.findAccountByAccountNumber(account.getAccountNumber());
         if (accountOpt.isPresent()) {
@@ -59,10 +69,10 @@ public class AccountService {
     }
     public List<Map<String, Object>> movementReport(LocalDateTime fromDate, LocalDateTime toDate, String ci) {
         String url =
-                "http://localhost:8080/movimientos"
-                        + "/listAccountsByGroupInternalId/"
-                        + ci;
-        AccountDto[] accDTO = this.restTemplate.getForObject(url, AccountDto[].class);
+                "http://localhost:8080/clientes"
+                        + ci
+                        + "/name";
+
         List<Account> accounts = accountRepository.findAccountsByClientId(ci);
 
         return accounts.stream().map(account -> {
@@ -73,7 +83,7 @@ public class AccountService {
             report.put("Numero de cuenta", account.getAccountNumber());
             report.put("Balance de cuenta", account.getInitialBalance());
             report.put("Movimientos", movements);
-            report.put("Nombre", accDTO.getClass().getSimpleName());
+
 
             return report;
         }).collect(Collectors.toList());}

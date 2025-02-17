@@ -28,6 +28,23 @@ public class MovementResource {
         return ResponseEntity.ok(movementService.makeTransfer(movementDto));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateMovement(@PathVariable Long id, @RequestBody MovementDto movementDto) {
+        return ResponseEntity.ok(movementService.updateMovement(id, movementDto));
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getAllMovements() {
+        return ResponseEntity.ok(movementService.getAllMovements());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteMovementById(@PathVariable Long id) {
+        movementService.deleteMovementById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+
    /* @GetMapping("/report")
     public ResponseEntity<?> generateReport() {
         return ResponseEntity.ok(movementService.movementReport());

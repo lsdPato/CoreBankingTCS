@@ -31,6 +31,8 @@ public class MovementService {
     private final MovementRepository transactionRepository;
     private final RestTemplate restTemplate;
 
+
+
     public Movements makeWithdrawal(MovementDto movementDto){
         Account account = this.findAccountByAccountNumber(movementDto.getDebtorAccount());
         this.validateAccountFunds(account, movementDto.getAmount());
@@ -101,6 +103,29 @@ public class MovementService {
 
         this.accountRepository.save(account);
     }
+    public void deleteMovementById(Long movementId) {
+        this.transactionRepository.deleteById(movementId);
+    }
+
+    public List<Movements> getAllMovements() {
+        return this.transactionRepository.findAll();
+    }
+
+    public Movements updateMovement(Long movementId, MovementDto movementDto) {
+        Movements existingMovement = transactionRepository.findById(movementId)
+                .orElseThrow(() -> new RuntimeException("No se encontro el movimiento con el ID " + movementId));
+
+        existingMovement.setAmount(movementDto.getAmount());
+        existingMovement.setBalance(movementDto.getBalance());
+        existingMovement.setDebtorAccount(movementDto.getDebtorAccount());
+        existingMovement.setCreditorAccount(movementDto.getCreditorAccount());
+        existingMovement.setMovementType(movementDto.getMovementType());
+        existingMovement.setDateTime(movementDto.getDateTime());
+
+        return this.transactionRepository.save(existingMovement);
+    }
+    
+    
 
 
 

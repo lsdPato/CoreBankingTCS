@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -30,17 +32,15 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final MovementRepository transactionRepository;
     private final MovementRepository movementRepository;
+    private final WebClient webClient;
+
+
 
     public Account assignedAccount(Account account) {
-//        String url =
-//                "http://localhost:8080/clientes/"
-//                        + ci
-//                        + "/name";
-//        String name = restTemplate.getForObject(url, String.class);
-//       log.info(name);
 
         Optional<Account> accountOpt =
                 accountRepository.findAccountByAccountNumber(account.getAccountNumber());
+
         if (accountOpt.isPresent()) {
             throw new AccountAssignedException("Error, la cuenta ya ha sido asignada");
         }
@@ -68,12 +68,7 @@ public class AccountService {
         return accountRepository.save(account);
     }
     public List<Map<String, Object>> movementReport(LocalDateTime fromDate, LocalDateTime toDate, String ci) {
-        String url =
-                "http://localhost:8080/clientes"
-                        + ci
-                        + "/name";
-
-        List<Account> accounts = accountRepository.findAccountsByClientId(ci);
+        List<Account> accounts = this.buscarCuentas(ci);
 
         return accounts.stream().map(account -> {
             List<Movements> movements = movementRepository.findByDebtorAccountAndDateTimeBetween(
@@ -83,9 +78,31 @@ public class AccountService {
             report.put("Numero de cuenta", account.getAccountNumber());
             report.put("Balance de cuenta", account.getInitialBalance());
             report.put("Movimientos", movements);
+            report.put("Cliente",this.validateClient(account.getClientId()).toString());
 
 
             return report;
         }).collect(Collectors.toList());}
+
+
+    public String validateClient(String ci) {
+        return  webClient.get()
+                .uri("http://localhost:8082/clientes/name/{ci}", ci)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+
+    }
+    public Mono<String> clientAccount(String ci) {
+        return  webClient.get()
+                .uri("http://localhost:8082/clientes/name/{ci}", ci)
+                .retrieve()
+                .bodyToMono(String.class);
+
+    }
+    public List<Account>  buscarCuentas(String ci){
+        return accountRepository.findAccountsByClientId(ci);
+
+    }
 
 }

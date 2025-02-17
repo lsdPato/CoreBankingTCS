@@ -7,6 +7,7 @@ import com.tcs.movement.model.Movements;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,7 +19,6 @@ import java.util.Map;
 public class AccountResource {
     private final AccountService accountService;
     private final MovementService movementService;
-
 
 
     @PostMapping
@@ -45,6 +45,7 @@ public class AccountResource {
         accountService.deleteAccount(accountNumber);
         return ResponseEntity.noContent().build();
     }
+
     @GetMapping("/movement-report")
     public ResponseEntity<List<Map<String, Object>>> movementReport(
             @RequestParam("fromDate") String fromDate,
@@ -58,6 +59,16 @@ public class AccountResource {
         return ResponseEntity.ok(report);
     }
 
+    @GetMapping("/test/{ci}")
+    public String test(@PathVariable String ci) {
+        return accountService.validateClient(ci);
+    }
+    @GetMapping("/buscar/{ci}")
+    public ResponseEntity<List<Account>> buscarAccount(@PathVariable String ci) {
+        List<Account> accounts = accountService.buscarCuentas(ci);
+        return ResponseEntity.ok(accounts);
+    }
+    
 
 
 }

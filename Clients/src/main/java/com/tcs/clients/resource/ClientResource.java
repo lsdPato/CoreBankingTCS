@@ -43,7 +43,7 @@ public class ClientResource {
         return ResponseEntity.ok(clientCi);
     }
 
-    @GetMapping("/{ci}/name")
+    @GetMapping("/name/{ci}")
     public ResponseEntity<String> getClientName(@PathVariable String ci) {
         String clientName = clientService.getClientName(ci);
         return ResponseEntity.ok(clientName);
